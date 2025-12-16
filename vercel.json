@@ -1,0 +1,14 @@
+{
+  "functions": {
+    "api/predict.py": {
+      "runtime": "vercel-python@3.9",
+      "memory": 1024,
+      "maxDuration": 10
+    }
+  },
+  "routes": [
+    { "src": "/", "dest": "/public/index.html" },
+    { "src": "/predict", "dest": "/api/predict.py" },
+    { "src": "/(.*)", "dest": "/public/$1" }
+  ]
+}

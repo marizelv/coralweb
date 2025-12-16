@@ -1,0 +1,60 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Image Upload Prediction</title>
+  <style>
+    body { font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif; max-width:700px; margin:40px auto; padding:0 20px; }
+    input, button { font-size: 1rem; padding: 8px; }
+    img.preview { max-width: 100%; height: auto; margin-top: 10px; border-radius:8px; }
+    .result { margin-top: 16px; font-weight:600; }
+  </style>
+</head>
+<body>
+  <h1>Image Upload — Predict</h1>
+  <p>Choose an image, then click <strong>Predict</strong>. The frontend sends the image to <code>/predict</code>.</p>
+
+  <input type="file" id="imageInput" accept="image/*" />
+  <button id="predictBtn">Predict</button>
+
+  <div id="previewContainer"></div>
+  <div class="result" id="result"></div>
+
+  <script>
+    const input = document.getElementById("imageInput");
+    const btn = document.getElementById("predictBtn");
+    const preview = document.getElementById("previewContainer");
+    const result = document.getElementById("result");
+
+    input.addEventListener("change", () => {
+      preview.innerHTML = "";
+      const file = input.files[0];
+      if (!file) return;
+      const img = document.createElement("img");
+      img.className = "preview";
+      img.src = URL.createObjectURL(file);
+      preview.appendChild(img);
+    });
+
+    btn.addEventListener("click", async () => {
+      result.textContent = "Uploading and predicting...";
+      const file = input.files[0];
+      if (!file) { result.textContent = "Please choose an image file."; return; }
+      const fd = new FormData();
+      fd.append("file", file);
+      try {
+        const resp = await fetch("/predict", { method: "POST", body: fd });
+        const data = await resp.json();
+        if (data.error) {
+          result.textContent = "Error: " + (data.error || JSON.stringify(data));
+        } else {
+          result.innerHTML = "Predicted: <strong>" + data.predicted_class_name + "</strong> (index: " + data.predicted_class_index + ")<br><pre style='white-space:pre-wrap; font-size:0.9rem; background:#f6f6f6; padding:8px; border-radius:6px;'>" + JSON.stringify(data.raw_output, null, 2) + "</pre>";
+        }
+      } catch (err) {
+        result.textContent = "Request failed: " + err;
+      }
+    });
+  </script>
+</body>
+</html>
