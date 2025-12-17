@@ -1,9 +1,6 @@
 fastapi
 uvicorn
-pillow
+tensorflow
 numpy
-tensorflow-cpu==2.15.0
-torch
-opencv-python
-
-
+pillow
+python-multipart
