@@ -8,7 +8,7 @@
   },
   "routes": [
     { "src": "/", "dest": "/public/index.html" },
-    { "src": "/predict", "dest": "/api/predict.py" },
+    { "src": "/predict", "dest": "/api/app.py" },
     { "src": "/(.*)", "dest": "/public/$1" }
   ]
 }
